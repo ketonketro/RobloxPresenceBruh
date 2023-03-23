@@ -2,49 +2,58 @@
 
 public class User
 {
-    private readonly string _username;
-    private bool _online;
-    private bool _wasOnline;
-
+    public string Username;
     public long Id { get; }
+    public int Activity { get; set; }
+    public string ActivityDetails { get; set; }
+    public long ActivityId { get; set; }
+    public long ActivityTime { get; set; }
 
 
     public User(long id, string username)
     {
         Id = id;
-        _username = username;
-        _online = false;
-        _wasOnline = false;
-    }
-
-    public void WentOnline()
-    {
-        _online = true;
-        _wasOnline = false;
-    }
-
-    public void WentOffline()
-    {
-        _online = false;
-        _wasOnline = true;
+        Username = username;
+        Activity = 0;
     }
 
     public bool IsOnline()
     {
-        return _online && !_wasOnline;
+        return Activity != 0;
     }
-
+    
     public override string ToString()
     {
-        string status = _online ? "ONLINE" : "OFFLINE";
+        string status = "";
+        string act = "";
 
         string spaces = "";
 
-        for (int i = 0; i < 20 - _username.Length; i++)
+        for (int i = 0; i < 20 - Username.Length; i++)
         {
             spaces += " ";
         }
+
+        switch (Activity)
+        {
+            case 0:
+                status = "OFFLINE";
+                break;
+            case 1: 
+                status = "ONLINE "; 
+                act = "on website";
+               break;
+            case 2:
+                status = "ONLINE ";
+                act = "in game";
+                break;
+            case 3:
+                status = "ONLINE ";
+                act = "in studio";
+                break;
+            
+        }
         
-        return $"{_username}{spaces} is {status}";
+        return $"{Username}{spaces} is {status} {act} {ActivityDetails}";
     }
 }

@@ -66,8 +66,20 @@ public class UsersManager
 
         for (int i = 0; i < _users.Count; i++)
         {
-            if (data.userPresences[i].userPresenceType == 2) _users[i].WentOnline();
-            else _users[i].WentOffline();
+            _users[i].Activity = data.userPresences[i].userPresenceType;
+            
+            
+            if (_users[i].ActivityId != data.userPresences[i].universeId)
+            {
+                _users[i].ActivityId = data.userPresences[i].universeId;
+                HttpResponseMessage gameResponse = await _client.GetAsync("https://games.roblox.com/v1/games?universeIds=" + _users[i].ActivityId);
+                string gameJson = await gameResponse.Content.ReadAsStringAsync();
+                dynamic gameData = JsonConvert.DeserializeObject<dynamic>(gameJson)!;
+                _users[i].ActivityDetails = gameData.name;
+            }
+            
+            
+
         }
     }
 
@@ -77,10 +89,10 @@ public class UsersManager
         System.Media.SoundPlayer player = new System.Media.SoundPlayer(soundPath);
         foreach (User user in _users)
         {
-            if(!user.IsOnline())return;
+            if (user.Activity != 2) return;
         }
 
-        Console.WriteLine("All players online. Playing Bruh Sound effect.");
+        Console.WriteLine("All players in-game. Playing Bruh Sound effect.");
         player.Play();
     }
     
